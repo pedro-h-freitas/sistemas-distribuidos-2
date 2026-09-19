@@ -1,9 +1,11 @@
-.PHONY: help install test lint format run \
+.PHONY: help install test test-verbose lint format run \
         up up-build down stop build logs ps shell-api
 
-PYTEST := poetry run pytest
-UVICORN := poetry run uvicorn
-RUFF := poetry run ruff
+CD_BACKEND := cd backend
+
+PYTEST := $(CD_BACKEND) && poetry run pytest
+UVICORN := $(CD_BACKEND) && poetry run uvicorn
+RUFF := $(CD_BACKEND) && poetry run ruff
 
 PORT := 8000
 COMPOSE := docker compose
@@ -16,6 +18,7 @@ help:
 	@echo "  Comandos Python/Poetry"
 	@echo "    make install                    - instala as dependências"
 	@echo "    make test                       - executa os testes"
+	@echo "    make test-verbose               - executa os testes com a flag verbose"
 	@echo "    make lint                       - verifica problemas no código"
 	@echo "    make format                     - formata o código"
 	@echo "    make run                        - inicia o servidor FastAPI"
@@ -35,19 +38,22 @@ help:
 
 
 install:
-	cd $(BACKEND) && poetry install
+	$(CD_BACKEND) && poetry install
 
 test:
-	cd $(BACKEND) && $(PYTEST)
+	$(PYTEST)
+
+test-verbose:
+	$(PYTEST) -v
 
 lint:
-	cd $(BACKEND) && $(RUFF) check .
+	$(RUFF) check .
 
 format:
-	cd $(BACKEND) && $(RUFF) format .
+	$(RUFF) format .
 
 run:
-	cd $(BACKEND) && $(UVICORN) app.main:app --reload --port $(PORT)
+	$(UVICORN) app.main:app --reload --port $(PORT)
 
 up:
 	$(COMPOSE) up -d $(SERVICE)
