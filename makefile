@@ -1,4 +1,4 @@
-.PHONY: help install test test-verbose lint format run \
+.PHONY: help install test test-verbose lint format format-check run \
         up up-build down stop build logs ps shell-api
 
 CD_BACKEND := cd backend
@@ -21,6 +21,7 @@ help:
 	@echo "    make test-verbose               - executa os testes com a flag verbose"
 	@echo "    make lint                       - verifica problemas no código"
 	@echo "    make format                     - formata o código"
+	@echo "    make format-check               - verifica a formatação do código"
 	@echo "    make run                        - inicia o servidor FastAPI"
 	@echo ""
 	@echo "  Comandos Docker"
@@ -51,6 +52,9 @@ lint:
 
 format:
 	$(RUFF) format .
+
+format-check:
+	$(RUFF) format --check .
 
 run:
 	$(UVICORN) app.main:app --reload --port $(PORT)
