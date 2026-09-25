@@ -1,4 +1,3 @@
-
 def get_users(database: dict):
     return database.get("users")
 
@@ -8,13 +7,7 @@ def get_user(database: dict, user_id: int):
     return users.get(user_id)
 
 
-def create_user(
-    database: dict,
-    id: int,
-    name: str,
-    password: str,
-    roles: list[str]
-):
+def create_user(database: dict, id: int, name: str, password: str, roles: list[str]):
     user_exists = database["users"].get(id) is not None
     if user_exists:
         return None
@@ -30,18 +23,14 @@ def create_user(
     return user
 
 
-def update_user_roles(
-    database: dict,
-    user: dict,
-    roles: list[str]
-):
+def update_user_roles(database: dict, user: dict, roles: list[str]):
     database["users"][user["id"]]["roles"] = roles
     return database["users"][user["id"]]
 
 
 def update_user(
     database: dict,
-    user: dict, 
+    user: dict,
     fields: dict,
 ):
     missing_fields = set(fields) - set(user)
