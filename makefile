@@ -1,4 +1,5 @@
 .PHONY: help install test test-verbose lint format format-check run \
+        alembic-create alembic-check alembic-history alembic-upgrade-head alembic-downgrade \
         up up-build down stop build logs ps shell-api
 
 CD_BACKEND := cd backend
@@ -6,6 +7,7 @@ CD_BACKEND := cd backend
 PYTEST := $(CD_BACKEND) && poetry run pytest
 UVICORN := $(CD_BACKEND) && poetry run uvicorn
 RUFF := $(CD_BACKEND) && poetry run ruff
+ALEMBIC := $(CD_BACKEND) && poetry run alembic
 
 PORT := 8000
 COMPOSE := docker compose
@@ -23,6 +25,14 @@ help:
 	@echo "    make format                     - formata o código"
 	@echo "    make format-check               - verifica a formatação do código"
 	@echo "    make run                        - inicia o servidor FastAPI"
+	@echo ""
+	@echo "  Comandos Alembic"
+	@echo "    make alembic-create MESSAGE=<message>  - Cria uma nova migration"
+	@echo "    make alembic-check                     - Checa se as models criadas estão corretas"
+	@echo "    make alembic-current                   - Mostra o estado atual das migrations"
+	@echo "    make alembic-history                   - Mostra o historico das migrations"
+	@echo "    make alembic-upgrade-head              - Executa as migrations para o head do hisotry"
+	@echo "    make alembic-downgrade                 - Reverte a última migration"
 	@echo ""
 	@echo "  Comandos Docker"
 	@echo "    make ps                         - lista os containers"
@@ -58,6 +68,24 @@ format-check:
 
 run:
 	$(UVICORN) app.main:app --reload --port $(PORT)
+
+alembic-create:
+	$(ALEMBIC) revision --autogenerate -m "$(MESSAGE)"
+
+alembic-check:
+	$(ALEMBIC) check
+
+alembic-current:
+	$(ALEMBIC) current
+
+alembic-history:
+	$(ALEMBIC) history
+
+alembic-upgrade-head:
+	$(ALEMBIC) upgrade head
+
+alembic-downgrade:
+	$(ALEMBIC) downgrade -1
 
 up:
 	$(COMPOSE) up -d $(SERVICE)
