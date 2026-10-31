@@ -1,48 +1,49 @@
-def get_users(database: dict):
-    return database.get("users")
+from sqlalchemy.orm import Session
+
+from app.models import User
+from app.repositories import user as user_repository
 
 
-def get_user(database: dict, user_id: int):
-    users = database.get("users")
-    return users.get(user_id)
+def get_users(session: Session) -> list[User]:
+    return user_repository.get_all(session)
 
 
-def create_user(database: dict, id: int, name: str, password: str, roles: list[str]):
-    user_exists = database["users"].get(id) is not None
+def get_user(session: Session, user_id: int) -> User | None:
+    return user_repository.get_by_id(session, user_id)
+
+
+def create_user(
+    session: Session, id: int, name: str, password: str, roles: list[str]
+) -> User:
+    user_exists = user_repository.get_by_id(session, id) is not None
     if user_exists:
         return None
 
-    user = {
-        "id": id,
-        "name": name,
-        "password": password,
-        "roles": roles,
-    }
+    user = User(
+        id=id,
+        name=name,
+        password=password,
+        roles=roles,
+    )
 
-    database["users"][id] = user
+    user = user_repository.create(session, user)
     return user
 
 
-def update_user_roles(database: dict, user: dict, roles: list[str]):
-    database["users"][user["id"]]["roles"] = roles
-    return database["users"][user["id"]]
+def update_user_roles(session: Session, user: User, roles: list[str]) -> User:
+    user = user_repository.update_roles(session, user.id, roles)
+    return user
 
 
 def update_user(
-    database: dict,
-    user: dict,
+    session: Session,
+    user: User,
     fields: dict,
-):
-    missing_fields = set(fields) - set(user)
-    if missing_fields:
-        raise ValueError(f"Non-existent fields: {missing_fields}")
-
-    for field, value in fields.items():
-        database["users"][user["id"]][field] = value
-
-    return database["users"][user["id"]]
+) -> User:
+    user = user_repository.update_user(session, user, fields)
+    return user
 
 
-def delete_user(database: dict, user: dict):
-    database["users"].pop(user["id"])
+def delete_user(session: Session, user: dict) -> None:
+    user_repository.delete(session, user)
     return
