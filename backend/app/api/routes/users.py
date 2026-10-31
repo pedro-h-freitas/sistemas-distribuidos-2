@@ -9,20 +9,20 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.get("", response_model=list[UserResponse], status_code=status.HTTP_200_OK)
-def get_users(database: DatabaseDep) -> list[UserResponse]:
-    users = user_service.get_users(database)
-    return [UserResponse(**user) for user in users.values()]
+def get_users(session: DatabaseDep) -> list[UserResponse]:
+    users = user_service.get_users(session)
+    return [UserResponse.from_model(user) for user in users]
 
 
 @router.get("/{user_id}", response_model=UserResponse, status_code=status.HTTP_200_OK)
 def get_user(user: UserByPathDep) -> UserResponse:
-    return UserResponse(**user)
+    return UserResponse.from_model(user)
 
 
 @router.post("", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-def create_user(payload: UserCreate, database: DatabaseDep) -> UserResponse:
+def create_user(payload: UserCreate, session: DatabaseDep) -> UserResponse:
     user = user_service.create_user(
-        database,
+        session,
         id=payload.id,
         name=payload.name,
         password=payload.password,
@@ -34,34 +34,34 @@ def create_user(payload: UserCreate, database: DatabaseDep) -> UserResponse:
             status_code=status.HTTP_409_CONFLICT, detail="User already exisits"
         )
 
-    return UserResponse(**user)
+    return UserResponse.from_model(user)
 
 
 @router.put(
     "/{user_id}/roles", response_model=UserResponse, status_code=status.HTTP_200_OK
 )
 def update_user_roles(
-    database: DatabaseDep, user: UserByPathDep, payload: list[str]
+    session: DatabaseDep, user: UserByPathDep, payload: list[str]
 ) -> UserResponse:
-    user = user_service.update_user_roles(database, user, roles=payload)
-    return UserResponse(**user)
+    user = user_service.update_user_roles(session, user, roles=payload)
+    return UserResponse.from_model(user)
 
 
 @router.patch("/{user_id}", response_model=UserResponse, status_code=status.HTTP_200_OK)
 def update_user(
-    database: DatabaseDep,
+    session: DatabaseDep,
     user: UserByPathDep,
     payload: UserUpdate,
 ) -> UserResponse:
     user = user_service.update_user(
-        database, user, fields=payload.model_dump(exclude_none=True)
+        session, user, fields=payload.model_dump(exclude_none=True)
     )
-    return UserResponse(**user)
+    return UserResponse.from_model(user)
 
 
 @router.delete(
     "/{user_id}", response_model=None, status_code=status.HTTP_204_NO_CONTENT
 )
-def delete_user(database: DatabaseDep, user: UserByPathDep) -> None:
-    user_service.delete_user(database, user)
+def delete_user(session: DatabaseDep, user: UserByPathDep) -> None:
+    user_service.delete_user(session, user)
     return
