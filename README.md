@@ -13,6 +13,14 @@ Para executar toda a suíte de testes a partir da raiz do repositório, use:
 make test
 ```
 
+Os testes usam o PostgreSQL configurado em `TEST_DATABASE_URL` (por padrão,
+`db_example_test`). Crie esse banco uma vez antes de executar a suíte:
+
+```bash
+docker compose up -d db
+docker compose exec db createdb -U ${POSTGRES_USER} ${POSTGRES_TEST_DB}
+```
+
 Para visualizar informações detalhadas sobre cada teste durante a execução, use:
 
 ```bash

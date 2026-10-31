@@ -16,8 +16,13 @@ POSTGRES_DB = os.getenv(
     "POSTGRES_DB",
     "db_example",
 )
+POSTGRES_TEST_DB = os.getenv(
+    "POSTGRES_TEST_DB",
+    "db_example_test",
+)
 POSTGRES_PORT = os.getenv(
     "POSTGRES_PORT",
     "5435",
 )
 DATABASE_URL = f"postgresql+psycopg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+TEST_DATABASE_URL = f"postgresql+psycopg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_TEST_DB}"

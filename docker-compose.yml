@@ -7,6 +7,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-user_example}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
       POSTGRES_DB: ${POSTGRES_DB:-db_example}
+      POSTGRES_TEST_DB: ${POSTGRES_TEST_DB:-db_example_test}
     ports:
       - "${POSTGRES_PORT}:5432"
     healthcheck:
