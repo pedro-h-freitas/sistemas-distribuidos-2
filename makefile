@@ -1,8 +1,11 @@
-.PHONY: help install test test-verbose lint format format-check run \
-        alembic-create alembic-check alembic-history alembic-upgrade-head alembic-downgrade \
-        up up-build down stop build logs ps shell-api
+.PHONY: help front-install front-dev front-lint front-format front-check front-test front-test-e2e front-build \
+        back-install back-test back-test-verbose back-lint back-format back-format-check back-run \
+        alembic-create alembic-check alembic-current alembic-history alembic-upgrade-head alembic-downgrade \
+        docker-up docker-up-build docker-stop docker-down docker-build docker-logs docker-ps docker-shell-api
 
 CD_BACKEND := cd backend
+
+NPM := npm --prefix frontend
 
 PYTEST := $(CD_BACKEND) && poetry run pytest
 UVICORN := $(CD_BACKEND) && poetry run uvicorn
@@ -11,62 +14,92 @@ ALEMBIC := $(CD_BACKEND) && poetry run alembic
 
 PORT := 8000
 COMPOSE := docker compose
-BACKEND := backend
 
 
 help:
 	@echo "Comandos disponíveis:"
 	@echo ""
+	@echo "  Comandos Frontend/npm"
+	@echo "    make front-install                   - instala dependências pelo lockfile"
+	@echo "    make front-dev                       - inicia o servidor de desenvolvimento Vite"
+	@echo "    make front-lint                      - verifica problemas com o Biome"
+	@echo "    make front-format                    - formata os arquivos com o Biome"
+	@echo "    make front-check                     - executa as verificações do Biome"
+	@echo "    make front-test                      - executa os testes unitários e de integração"
+	@echo "    make front-test-e2e                  - executa os testes E2E com Playwright"
+	@echo "    make front-build                     - gera a versão de produção do frontend"
+	@echo ""
 	@echo "  Comandos Python/Poetry"
-	@echo "    make install                    - instala as dependências"
-	@echo "    make test                       - executa os testes"
-	@echo "    make test-verbose               - executa os testes com a flag verbose"
-	@echo "    make lint                       - verifica problemas no código"
-	@echo "    make format                     - formata o código"
-	@echo "    make format-check               - verifica a formatação do código"
-	@echo "    make run                        - inicia o servidor FastAPI"
+	@echo "    make back-install                         - instala as dependências Python"
+	@echo "    make back-test                            - executa os testes do backend"
+	@echo "    make back-test-verbose                    - executa os testes com saída detalhada"
+	@echo "    make back-lint                            - verifica problemas no código Python"
+	@echo "    make back-format                          - formata o código Python"
+	@echo "    make back-format-check                    - verifica a formatação do código Python"
+	@echo "    make back-run                             - inicia o servidor FastAPI"
 	@echo ""
 	@echo "  Comandos Alembic"
 	@echo "    make alembic-create MESSAGE=<message>  - Cria uma nova migration"
-	@echo "    make alembic-check                     - Checa se as models criadas estão corretas"
-	@echo "    make alembic-current                   - Mostra o estado atual das migrations"
-	@echo "    make alembic-history                   - Mostra o historico das migrations"
-	@echo "    make alembic-upgrade-head              - Executa as migrations para o head do hisotry"
-	@echo "    make alembic-downgrade                 - Reverte a última migration"
+	@echo "    make alembic-check                     - verifica se os models estão sincronizados"
+	@echo "    make alembic-current                   - mostra a revisão aplicada no banco"
+	@echo "    make alembic-history                   - mostra o histórico de migrations"
+	@echo "    make alembic-upgrade-head              - aplica migrations até a revisão mais recente"
+	@echo "    make alembic-downgrade                 - reverte a última migration"
 	@echo ""
 	@echo "  Comandos Docker"
-	@echo "    make ps                         - lista os containers"
-	@echo "    make build                      - builda a imagem dos serviços"
-	@echo "    make build SERVICE=<service>    - builda a imagem do serviço (ex.: api, db)"
-	@echo "    make up                         - inicia todos os serviços"
-	@echo "    make up SERVICE=<service>       - inicia o serviço (ex.: api, db)"
-	@echo "    make up-build                   - builda e inicia todos os serviços"
-	@echo "    make up-build SERVICE=<service> - builda e inicia o serviço (ex.: api, db)"
-	@echo "    make stop SERVICE=<service>     - para um serviço (ex.: api, db)"
-	@echo "    make down                       - para e remove todos os containers"
-	@echo "    make logs SERVICE=<service>     - acompanha os logs do serviço (ex.: api, db)"
-	@echo "    make shell-api                  - abre um shell no container da API"
+	@echo "    make docker-ps                         - lista os containers ativos"
+	@echo "    make docker-build [SERVICE=<service>]  - constrói todas as imagens ou a imagem do serviço"
+	@echo "    make docker-up [SERVICE=<service>]     - inicia todos os serviços ou um serviço"
+	@echo "    make docker-up-build [SERVICE=<service>] - constrói e inicia todos ou um serviço"
+	@echo "    make docker-stop SERVICE=<service>     - para o serviço"
+	@echo "    make docker-down                       - para e remove os containers"
+	@echo "    make docker-logs SERVICE=<service>     - acompanha os logs do serviço"
+	@echo "    make docker-shell-api                  - abre um shell no container da API"
 
 
-install:
+front-install:
+	$(NPM) ci
+
+front-dev:
+	$(NPM) run dev
+
+front-lint:
+	$(NPM) run lint
+
+front-format:
+	$(NPM) run format
+
+front-check:
+	$(NPM) run check
+
+front-test:
+	$(NPM) run test
+
+front-test-e2e:
+	$(NPM) run test:e2e
+
+front-build:
+	$(NPM) run build
+
+back-install:
 	$(CD_BACKEND) && poetry install
 
-test:
+back-test:
 	$(PYTEST)
 
-test-verbose:
+back-test-verbose:
 	$(PYTEST) -v
 
-lint:
+back-lint:
 	$(RUFF) check .
 
-format:
+back-format:
 	$(RUFF) format .
 
-format-check:
+back-format-check:
 	$(RUFF) format --check .
 
-run:
+back-run:
 	$(UVICORN) app.main:app --reload --port $(PORT)
 
 alembic-create:
@@ -87,26 +120,26 @@ alembic-upgrade-head:
 alembic-downgrade:
 	$(ALEMBIC) downgrade -1
 
-up:
+docker-up:
 	$(COMPOSE) up -d $(SERVICE)
 
-up-build:
+docker-up-build:
 	$(COMPOSE) up -d --build $(SERVICE)
 
-stop:
+docker-stop:
 	$(COMPOSE) stop $(SERVICE)
 
-down:
+docker-down:
 	$(COMPOSE) down
 
-build:
+docker-build:
 	$(COMPOSE) build $(SERVICE)
 
-logs:
+docker-logs:
 	$(COMPOSE) logs -f $(SERVICE)
 
-ps:
+docker-ps:
 	$(COMPOSE) ps
 
-shell-api:
+docker-shell-api:
 	$(COMPOSE) exec api sh
