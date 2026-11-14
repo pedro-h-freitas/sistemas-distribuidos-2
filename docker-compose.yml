@@ -38,5 +38,19 @@ services:
     ports:
       - "${API_PORT}:8000"
 
+  frontend:
+    build:
+      context: ./frontend
+
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+
+    environment:
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:${API_PORT:-8000}}
+
+    depends_on:
+      api:
+        condition: service_healthy
+
 volumes:
   c216_db_data:
