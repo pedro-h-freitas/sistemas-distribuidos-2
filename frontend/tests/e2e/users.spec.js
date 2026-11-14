@@ -22,7 +22,10 @@ test("mostra a lista vazia de usuários", async ({ page }) => {
   await expect(page.getByText("Nenhum usuário cadastrado.")).toBeVisible();
 });
 
-test("persiste o usuário no backend após page.reload()", async ({ page, request }) => {
+test("persiste o usuário no backend após page.reload()", async ({
+  page,
+  request,
+}) => {
   // ID exclusivo para não depender dos registros já existentes no banco.
   const userId = 1_000_000_000 + Math.floor(Math.random() * 1_000_000_000);
   const name = `Ana Silva E2E ${userId}`;
@@ -31,7 +34,9 @@ test("persiste o usuário no backend após page.reload()", async ({ page, reques
 
   try {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: "Gerenciador de Usuários" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Gerenciador de Usuários" }),
+    ).toBeVisible();
 
     await page.getByLabel("ID").fill(String(userId));
     await page.getByLabel("Nome").fill(name);
@@ -73,9 +78,9 @@ test("persiste o usuário no backend após page.reload()", async ({ page, reques
         }),
       ]),
     );
-    await expect(page.getByRole("listitem").filter({ hasText: name })).toContainText(
-      "Papéis: admin, reader",
-    );
+    await expect(
+      page.getByRole("listitem").filter({ hasText: name }),
+    ).toContainText("Papéis: admin, reader");
     await expect(page.getByText(password)).toBeHidden();
   } finally {
     // Remove apenas o registro criado pelo teste, mesmo em caso de falha de assertiva.

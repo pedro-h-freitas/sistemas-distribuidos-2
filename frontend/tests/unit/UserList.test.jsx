@@ -34,12 +34,24 @@ describe("UserList: estados de requisição", () => {
   it("prioriza carregamento mesmo quando não existem usuários", () => {
     render(<UserList users={[]} loading={true} loadError="" />);
     expect(screen.getByText("Carregando usuários.")).toBeInTheDocument();
-    expect(screen.queryByText("Nenhum usuário cadastrado.")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Nenhum usuário cadastrado."),
+    ).not.toBeInTheDocument();
   });
 
   it("exibe o erro mesmo com uma lista vazia", () => {
-    render(<UserList users={[]} loading={false} loadError="Falha ao consultar API" />);
-    expect(screen.getByRole("alert")).toHaveTextContent("Erro ao carregar usuários: Falha ao consultar API.");
-    expect(screen.queryByText("Nenhum usuário cadastrado.")).not.toBeInTheDocument();
+    render(
+      <UserList
+        users={[]}
+        loading={false}
+        loadError="Falha ao consultar API"
+      />,
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Erro ao carregar usuários: Falha ao consultar API.",
+    );
+    expect(
+      screen.queryByText("Nenhum usuário cadastrado."),
+    ).not.toBeInTheDocument();
   });
 });

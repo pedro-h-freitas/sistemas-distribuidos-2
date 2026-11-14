@@ -45,7 +45,9 @@ describe("App: integração com API de usuários", () => {
     );
 
     pending.resolve(jsonResponse([]));
-    expect(await screen.findByText("Nenhum usuário cadastrado.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Nenhum usuário cadastrado."),
+    ).toBeInTheDocument();
     expect(screen.queryByText("Carregando usuários.")).not.toBeInTheDocument();
   });
 
@@ -56,7 +58,9 @@ describe("App: integração com API de usuários", () => {
 
     expect(await screen.findByText(/Ana/)).toBeInTheDocument();
     expect(screen.getByText("Papéis: admin, reader")).toBeInTheDocument();
-    expect(screen.queryByText("Nenhum usuário cadastrado.")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Nenhum usuário cadastrado."),
+    ).not.toBeInTheDocument();
   });
 
   it("mostra lista vazia quando a API retorna []", async () => {
@@ -64,16 +68,26 @@ describe("App: integração com API de usuários", () => {
 
     render(<App />);
 
-    expect(await screen.findByText("Nenhum usuário cadastrado.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Nenhum usuário cadastrado."),
+    ).toBeInTheDocument();
   });
 
   it("exibe o detalhe do erro HTTP retornado pela API", async () => {
-    fetch.mockResolvedValueOnce(jsonResponse({ detail: "Serviço indisponível" }, 503));
+    fetch.mockResolvedValueOnce(
+      jsonResponse({ detail: "Serviço indisponível" }, 503),
+    );
 
     render(<App />);
 
-    expect(await screen.findByText(/Erro ao carregar usuários: Serviço indisponível/)).toBeInTheDocument();
-    expect(screen.queryByText("Nenhum usuário cadastrado.")).not.toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        /Erro ao carregar usuários: Serviço indisponível/,
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("Nenhum usuário cadastrado."),
+    ).not.toBeInTheDocument();
   });
 
   it("exibe erro de rede quando o fetch rejeita", async () => {
@@ -81,7 +95,9 @@ describe("App: integração com API de usuários", () => {
 
     render(<App />);
 
-    expect(await screen.findByText(/Erro ao carregar usuários: Falha de conexão/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Erro ao carregar usuários: Falha de conexão/),
+    ).toBeInTheDocument();
   });
 
   it("cadastra usuário via POST e atualiza a lista com a resposta da API", async () => {
@@ -91,7 +107,9 @@ describe("App: integração com API de usuários", () => {
       .mockResolvedValueOnce(jsonResponse(ana, 201));
 
     render(<App />);
-    expect(await screen.findByText("Nenhum usuário cadastrado.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Nenhum usuário cadastrado."),
+    ).toBeInTheDocument();
 
     await user.type(screen.getByLabelText("ID"), "1");
     await user.type(screen.getByLabelText("Nome"), "Ana");
@@ -99,7 +117,9 @@ describe("App: integração com API de usuários", () => {
     await user.type(screen.getByLabelText("Papéis"), "admin, reader");
     await user.click(screen.getByRole("button", { name: "Adicionar usuário" }));
 
-    expect(await screen.findByText("Papéis: admin, reader")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Papéis: admin, reader"),
+    ).toBeInTheDocument();
     expect(fetch).toHaveBeenCalledTimes(2);
     expect(fetch).toHaveBeenNthCalledWith(
       2,

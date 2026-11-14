@@ -28,11 +28,7 @@ export default function App() {
         <h2 id="users-heading" className="text-xl font-semibold">
           Usuários cadastrados
         </h2>
-        <UserList
-          users={users}
-          loading={loading}
-          loadError={loadError}
-        />
+        <UserList users={users} loading={loading} loadError={loadError} />
       </section>
     </main>
   );

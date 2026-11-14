@@ -6,14 +6,8 @@ class ApiError extends Error {
   }
 }
 
-async function apiFetch(
-  path,
-  options = {},
-){
-  const {
-    method = "GET",
-    body,
-  } = options;
+async function apiFetch(path, options = {}) {
+  const { method = "GET", body } = options;
 
   const requestHeaders = new Headers();
 
@@ -48,28 +42,22 @@ async function apiFetch(
   return response.json();
 }
 
-
 export async function apiGet(path) {
-  return apiFetch(path)
+  return apiFetch(path);
 }
-
 
 export async function apiPost(path, body) {
-  return apiFetch(path, { method: 'POST', body })
+  return apiFetch(path, { method: "POST", body });
 }
-
 
 export async function apiPatch(path, body) {
-  return apiFetch(path, { method: 'PATCH', body })
+  return apiFetch(path, { method: "PATCH", body });
 }
-
 
 export async function apiPut(path, body) {
-  return apiFetch(path, { method: 'PUT', body })
+  return apiFetch(path, { method: "PUT", body });
 }
-
 
 export async function apiDelete(path) {
-  return apiFetch(path, { method: 'DELETE' })
+  return apiFetch(path, { method: "DELETE" });
 }
-

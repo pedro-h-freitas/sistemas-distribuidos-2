@@ -4,7 +4,11 @@ export function UserList({ users, loading, loadError }) {
   }
 
   if (loadError) {
-    return <p role="alert" className="text-slate-600">Erro ao carregar usuários: {loadError}.</p>;
+    return (
+      <p role="alert" className="text-slate-600">
+        Erro ao carregar usuários: {loadError}.
+      </p>
+    );
   }
 
   if (users.length === 0) {
