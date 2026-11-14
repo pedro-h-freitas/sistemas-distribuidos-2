@@ -28,9 +28,9 @@ services:
       CORS_ORIGINS: ${CORS_ORIGINS}
       POSTGRES_USER: ${POSTGRES_USER:-user_example}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
-      POSTGRES_HOST: ${POSTGRES_HOST:-localhost}
+      POSTGRES_HOST: db
       POSTGRES_DB: ${POSTGRES_DB:-db_example}
-      POSTGRES_PORT: ${POSTGRES_PORT:-5435}
+      POSTGRES_PORT: 5432
     depends_on:
       db:
         condition: service_healthy
