@@ -48,9 +48,5 @@ services:
     environment:
       - VITE_API_URL=${VITE_API_URL:-http://localhost:${API_PORT:-8000}}
 
-    depends_on:
-      api:
-        condition: service_healthy
-
 volumes:
   c216_db_data:
