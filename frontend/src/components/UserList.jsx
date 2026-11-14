@@ -1,4 +1,12 @@
-export function UserList({ users }) {
+export function UserList({ users, loading, loadError }) {
+  if (loading) {
+    return <p className="text-slate-600">Carregando usuários.</p>;
+  }
+
+  if (loadError) {
+    return <p role="alert" className="text-slate-600">Erro ao carregar usuários: {loadError}.</p>;
+  }
+
   if (users.length === 0) {
     return <p className="text-slate-600">Nenhum usuário cadastrado.</p>;
   }

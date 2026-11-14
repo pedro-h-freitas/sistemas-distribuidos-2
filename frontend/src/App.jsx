@@ -1,12 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UserForm } from "./components/UserForm";
 import { UserList } from "./components/UserList";
+import { createUser, listUsers } from "./services/user";
 
 export default function App() {
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
-  function addUser(user) {
-    setUsers((current) => [...current, user]);
+  useEffect(() => {
+    listUsers()
+      .then(setUsers)
+      .catch((error) => setLoadError(error.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  async function addUser(user) {
+    const created = await createUser(user); // lança erro se falhar
+    setUsers((current) => [...current, created]);
   }
 
   return (
@@ -17,7 +28,11 @@ export default function App() {
         <h2 id="users-heading" className="text-xl font-semibold">
           Usuários cadastrados
         </h2>
-        <UserList users={users} />
+        <UserList
+          users={users}
+          loading={loading}
+          loadError={loadError}
+        />
       </section>
     </main>
   );
