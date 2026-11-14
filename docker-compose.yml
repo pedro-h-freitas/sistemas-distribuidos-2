@@ -25,6 +25,7 @@ services:
     container_name: c216_api
     environment:
       ENVIRONMENT: ${ENVIRONMENT:-development}
+      CORS_ORIGINS: ${CORS_ORIGINS}
       POSTGRES_USER: ${POSTGRES_USER:-user_example}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
       POSTGRES_HOST: ${POSTGRES_HOST:-localhost}
